@@ -1,41 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLACEMENT PREDICTION</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style1.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
 </head>
 <body>
-
     <div class="main">
         <div class="navbar">
             <div class="icon">
-                <h2 class="logo">PLACEMENT PREDICTION</h2>
+                <h2 class="logo" style="color: #ff7200;">PLACEMENT PREDICTION</h2>
             </div>
 
             <div class="menu">
                 <ul>
                     <li><a href="/">HOME</a></li>
                     <li><a href="/about">ABOUT</a></li>
-                    
-                    
+                    <li><a href="/index">LOGIN</a></li>
+                    <li><a href="{{ url_for('admin_login') }}">ADMIN</a></li>
                 </ul>
             </div>
-
-            
         </div> 
         <div class="content">
-            <h1>WELCOME TO<br><span>PLACEMENT</span><br>PREDICTION APP</h1>
+            <h1>WELCOME TO<br><span>PLACEMENT</span><br>PREDICTION</h1>
             <p class="par">A Placement Prediction App is a tool designed to assist individuals, usually students or 
                 job seekers , in predicting <br> or estimating their chances of securing a job or internship placement. 
                 This type of application typically leverages<br> various data points and algorithms to provide users 
                 with insights into their potential success in the job market.</p>
 
-                <button class="cn"><a href="/index">PREDICT</a></button>
+            <button class="cn">PREDICT</button>
 
-                
-    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Accuracy</h3>
+                    <div class="stat-number">92%</div>
+                    <p>Prediction Accuracy</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Users</h3>
+                    <div class="stat-number">1000+</div>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Features</h3>
+                    <div class="stat-number">15+</div>
+                    <p>Key Parameters</p>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="features">
+                <h2>Key Features</h2>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <h3>📊 Data Analysis</h3>
+                        <p>Advanced analytics for accurate predictions</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>🎯 Personalized</h3>
+                        <p>Customized recommendations</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>📈 Real-time</h3>
+                        <p>Instant prediction results</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <h2>Contact Us</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <p>PlacementPrediction20@gmail.com</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <p>+91 9876543214</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

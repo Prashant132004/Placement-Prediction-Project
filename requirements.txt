@@ -1,7 +1,9 @@
 Flask
 Scikit-Learn
 Pandas
-Pickle
 Numpy
 matplotlib
 Seaborn
+Flask-Login
+Flask-SQLAlchemy
+Werkzeug

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Placement Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>Register</h2>
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a href="{{ url_for('home') }}" style="color: #007bff; text-decoration: none;">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="{{ url_for('register') }}" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label for="username">Username (alphabets only)</label>
+                    <input type="text" id="username" name="username" pattern="[A-Za-z]+" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required onkeypress="handleEmailKeyPress(event)">
+                </div>
+                <div class="form-group">
+                    <label for="mobile_number">Mobile Number</label>
+                    <input type="tel" id="mobile_number" name="mobile_number" pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required onkeypress="handlePasswordKeyPress(event)">
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('password')"></i>
+                    </div>
+                    <div class="password-requirements">
+                        <p>Password must contain:</p>
+                        <ul>
+                            <li id="length">At least 8 characters</li>
+                            <li id="uppercase">At least one uppercase letter</li>
+                            <li id="lowercase">At least one lowercase letter</li>
+                            <li id="number">At least one number</li>
+                            <li id="special">At least one special character</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <div class="password-container">
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('confirm_password')"></i>
+                    </div>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const icon = passwordInput.nextElementSibling;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function validateEmail(email) {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+            return emailPattern.test(email);
+        }
+
+        function validatePassword(password) {
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+
+            // Update visual feedback
+            Object.keys(requirements).forEach(key => {
+                const element = document.getElementById(key);
+                if (requirements[key]) {
+                    element.style.color = 'green';
+                    element.style.textDecoration = 'line-through';
+                } else {
+                    element.style.color = 'red';
+                    element.style.textDecoration = 'none';
+                }
+            });
+
+            return Object.values(requirements).every(Boolean);
+        }
+
+        function handleEmailKeyPress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const email = document.getElementById('email').value;
+                if (!validateEmail(email)) {
+                    alert("Please enter a valid email address");
+                    document.getElementById('email').focus();
+                } else {
+                    document.getElementById('password').focus();
+                }
+            }
+        }
+
+        function handlePasswordKeyPress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const password = document.getElementById('password').value;
+                if (!validatePassword(password)) {
+                    alert("Password does not meet all requirements. At least one uppercase, lowercase, one number, one special character[!@#$%^&*()]");
+                    document.getElementById('password').focus();
+                } else {
+                    document.getElementById('confirm_password').focus();
+                }
+            }
+        }
+
+        function validateForm() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const mobileNumber = document.getElementById('mobile_number').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            // Username validation (alphabets only)
+            if (!/^[A-Za-z0-9@_]+$/.test(username)) {
+                alert('Username should contain only alphabets and @_ allowed');
+                document.getElementById('username').focus();
+                return false;
+            }
+
+            // Email validation
+            if (!validateEmail(email)) {
+                alert("Please enter a valid email address");
+                document.getElementById('email').focus();
+                return false;
+            }
+
+            // Mobile number validation
+            if (!/^[0-9]{10}$/.test(mobileNumber)) {
+                alert("Please enter a valid 10-digit mobile number");
+                document.getElementById('mobile_number').focus();
+                return false;
+            }
+
+            // Password validation
+            if (!validatePassword(password)) {
+                alert("Password does not meet all requirements. At least one uppercase, lowercase, one number, one special character[!@#$%^&*()]");
+                document.getElementById('password').focus();
+                return false;
+            }
+
+            // Password match validation
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                document.getElementById('confirm_password').focus();
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Add real-time password validation
+        document.getElementById('password').addEventListener('input', function(e) {
+            validatePassword(e.target.value);
+        });
+    </script>
+
+    <style>
+        .password-requirements {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        .password-requirements ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 5px;
+        }
+        .password-requirements li {
+            margin-bottom: 3px;
+        }
+        .password-container {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+    </style>
+</body>
+</html> 

@@ -1,89 +1,645 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/css/style.css">
-    <title>Placement Prediction</title>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Placement Prediction App</h1>
-        </header>
-        <form action="{{ url_for('predict') }}" method="GET">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" required>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Placement Prediction</h2>
+            <form id="predictionForm" class="mt-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="scenario_name">Scenario Name</label>
+                            <input type="text" class="form-control" id="scenario_name" name="scenario_name" 
+                                   placeholder="e.g., Current Scenario, Improved Skills, etc." required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="cgpa">CGPA</label>
+                            <input type="number" class="form-control" id="cgpa" name="cgpa" step="0.01" min="0" max="10" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="projects">Number of Projects</label>
+                            <input type="number" class="form-control" id="projects" name="projects" min="0" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="workshops">Number of Workshops Attended</label>
+                            <input type="number" class="form-control" id="workshops" name="workshops" min="0" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="mini_projects">Number of Mini Projects</label>
+                            <input type="number" class="form-control" id="mini_projects" name="mini_projects" min="0" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="tw_percentage">12th Percentage</label>
+                            <input type="number" class="form-control" id="tw_percentage" name="tw_percentage" 
+                                   step="0.01" min="0" max="100" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="te_percentage">10th Percentage</label>
+                            <input type="number" class="form-control" id="te_percentage" name="te_percentage" 
+                                   step="0.01" min="0" max="100" required>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="skills">Technical Skills</label>
+                            <div class="skills-container">
+                                <div class="skill-item mb-2">
+                                    <select class="form-select" name="skill_name[]" id="skill_name_1" aria-label="Select technical skill" required>
+                                        <option value="">Select Skill</option>
+                                        <option value="Python">Python</option>
+                                        <option value="Java">Java</option>
+                                        <option value="JavaScript">JavaScript</option>
+                                        <option value="C++">C++</option>
+                                        <option value="SQL">SQL</option>
+                                        <option value="Machine Learning">Machine Learning</option>
+                                        <option value="Data Science">Data Science</option>
+                                        <option value="Web Development">Web Development</option>
+                                        <option value="Cloud Computing">Cloud Computing</option>
+                                        <option value="DevOps">DevOps</option>
+                                        <option value="Mobile Development">Mobile Development</option>
+                                        <option value="Cybersecurity">Cybersecurity</option>
+                                        <option value="Blockchain">Blockchain</option>
+                                        <option value="Artificial Intelligence">Artificial Intelligence</option>
+                                        <option value="Big Data">Big Data</option>
+                                    </select>
+                                    <select class="form-select ms-2" name="skill_level[]" id="skill_level_1" aria-label="Select skill level" required>
+                                        <option value="">Select Level</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addSkillField()">Add Another Skill</button>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="communication_skills">Communication Skills (1-5)</label>
+                            <input type="number" class="form-control" id="communication_skills" name="communication_skills" 
+                            step="0.01" min="0" max="5" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="internship">Number of Internships</label>
+                            <input type="number" class="form-control" id="internship" name="internship" min="0" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="hackathon">Number of Hackathons Participated</label>
+                            <input type="number" class="form-control" id="hackathon" name="hackathon" min="0" required>
+                        </div>
+                        
+                        
+                        
+                        <div class="form-group mb-3">
+                            <label for="backlogs">Number of Backlogs</label>
+                            <input type="number" class="form-control" id="backlogs" name="backlogs" min="0" required>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="branch">Branch</label>
-                    <select id="branch" name="branch" required>
-                        <option value="" disabled selected>Select branch</option>
-                        <option>CSE</option>
-                        <option>ISE</option>
-                        <option>ECE</option>
-                        <option>CSE-AI</option>
-                        <option>MECHANICAL ENGINEERING</option>
-                        <option>CIVIL ENGINEERING</option>
-                        <option>CSE-DS</option>
-                        <option>CSE-CY</option>
-                    </select>
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg" id="predictBtn">
+                        <span id="predictBtnText">Get Prediction</span>
+                        <span id="predictBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="cgpa">CGPA</label>
-                    <input type="number" id="cgpa" name="cgpa" min="0" max="10" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="skills">Skills</label>
-                    <input type="text" id="skills" name="skills" required>
-                </div>
-                <div class="form-group">
-                    <label for="internship">Internship</label>
-                    <select id="internship" name="internship" required>
-                        <option value="1">Yes</option>
-                        <option value="0">No</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="hackathon">Hackathon</label>
-                    <select id="hackathon" name="hackathon" required>
-                        <option value="1">Yes</option>
-                        <option value="0">No</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="projects">Major Projects</label>
-                    <input type="number" id="projects" name="projects" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="workshops">Certifications</label>
-                    <input type="number" id="workshops" name="workshops" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="mini_projects">Mini Projects</label>
-                    <input type="number" id="mini_projects" name="mini_projects" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="communication_skills">Communication Rating</label>
-                    <input type="number" id="communication_skills" name="communication_skills" min="0" max="10" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="tw_percentage">12th Percentage</label>
-                    <input type="number" id="tw_percentage" name="tw_percentage" min="0" max="100" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="te_percentage">10th Percentage</label>
-                    <input type="number" id="te_percentage" name="te_percentage" min="0" max="100" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="backlogs">Backlogs</label>
-                    <input type="number" id="backlogs" name="backlogs" min="0" required>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <div id="predictionResult" class="card d-none">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="result-box p-4 mb-4">
+                                <h4 class="text-primary mb-3">Your Results</h4>
+                                <h6 class="mb-2" id="nameResult"></h6>
+                                <h5 class="mb-3" id="placementResult"></h5>
+                                <div class="placement-probability mb-3">
+                                    <div class="progress" style="height: 25px;">
+                                        <div id="probabilityBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <h4 class="text-center mt-2" id="probabilityText"></h4>
+                                </div>
+                                <h4 class="text-success" id="salaryResult"></h4>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-summary p-4 mb-4">
+                                <h4 class="text-primary mb-3">Profile Summary</h4>
+                                <div class="overall-score-container text-center">
+                                    <div class="score-circle mb-3">
+                                        <div class="score-value" id="overallScore">0%</div>
+                                    </div>
+                                    <h5 class="text-muted">Overall Profile Strength</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="recommendations-box p-4">
+                                <h4 class="text-primary mb-3">Recommendations</h4>
+                                <div class="d-flex flex-wrap justify-content-center gap-4" id="recommendationsList"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <button type="submit">Predict Placement</button>
-        </form>
+        </div>
     </div>
-</body>
-</html>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="chart-container">
+                <div class="chart-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Profile Distribution</h5>
+                            <canvas id="profilePieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Key Metrics</h5>
+                            <canvas id="profileBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-control, .form-select {
+    height: 38px;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.form-select[multiple] {
+    height: auto;
+    min-height: 120px;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+    border: 8px solid #e9ecef;
+}
+
+.score-circle::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 8px solid transparent;
+    border-top-color: #007bff;
+    border-right-color: #007bff;
+    transform: rotate(45deg);
+    transition: all 0.3s ease;
+}
+
+.score-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff;
+    z-index: 1;
+}
+
+.overall-score-container {
+    padding: 20px;
+}
+
+.chart-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.chart-card {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.chart-card .card {
+    height: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card .card-body {
+    padding: 20px;
+}
+
+.chart-card canvas {
+    width: 100% !important;
+    height: 300px !important;
+}
+</style>
+
+<script>
+document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const predictBtn = document.getElementById('predictBtn');
+    const predictBtnText = document.getElementById('predictBtnText');
+    const predictBtnSpinner = document.getElementById('predictBtnSpinner');
+    const predictionResult = document.getElementById('predictionResult');
+    
+    // Show loading state
+    predictBtn.disabled = true;
+    predictBtnText.textContent = 'Processing...';
+    predictBtnSpinner.classList.remove('d-none');
+    predictionResult.classList.add('d-none');
+    
+    try {
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Process skills
+        const skillNames = document.querySelectorAll('select[name="skill_name[]"]');
+        const skillLevels = document.querySelectorAll('select[name="skill_level[]"]');
+        const skills = [];
+        
+        for (let i = 0; i < skillNames.length; i++) {
+            if (skillNames[i].value && skillLevels[i].value) {
+                skills.push(`${skillNames[i].value} (${skillLevels[i].value})`);
+            }
+        }
+        data.skills = skills.join(', ');
+        
+        // Convert numeric values
+        data.cgpa = parseFloat(data.cgpa);
+        data.projects = parseInt(data.projects);
+        data.workshops = parseInt(data.workshops);
+        data.mini_projects = parseInt(data.mini_projects);
+        data.communication_skills = parseInt(data.communication_skills);
+        data.internship = parseInt(data.internship);
+        data.hackathon = parseInt(data.hackathon);
+        data.tw_percentage = parseFloat(data.tw_percentage);
+        data.te_percentage = parseFloat(data.te_percentage);
+        data.backlogs = parseInt(data.backlogs);
+        
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.error) {
+            throw new Error(result.error);
+        }
+        
+        predictionResult.classList.remove('d-none');
+        
+        // Update results with null checks
+        const nameResult = document.getElementById('nameResult');
+        const placementResult = document.getElementById('placementResult');
+        const probabilityBar = document.getElementById('probabilityBar');
+        const probabilityText = document.getElementById('probabilityText');
+        const salaryResult = document.getElementById('salaryResult');
+        const recommendationsList = document.getElementById('recommendationsList');
+        
+        if (nameResult) nameResult.textContent = `Name: ${data.name}`;
+        
+        // Calculate placement probability based on all factors
+        const academicScore = ((data.cgpa / 10) * 30 + (data.tw_percentage / 100) * 10 + (data.te_percentage / 100) * 10);
+        const technicalScore = ((data.projects / 5) * 15 + (data.mini_projects / 5) * 10 + (data.skills.split(',').length / 10) * 15);
+        const practicalScore = ((data.internship * 10) + (data.hackathon * 5) + (data.workshops / 5) * 5);
+        const softSkillsScore = ((data.communication_skills / 5) * 10);
+        
+        // Calculate overall probability
+        let probability = Math.round(academicScore + technicalScore + practicalScore + softSkillsScore);
+        
+        // Adjust probability based on backlogs
+        if (data.backlogs > 0) {
+            probability = Math.max(0, probability - (data.backlogs * 10));
+        }
+        
+        // Ensure probability is between 0 and 100
+        probability = Math.min(100, Math.max(0, probability));
+        
+        if (probabilityBar) {
+            probabilityBar.style.width = `${probability}%`;
+            probabilityBar.className = `progress-bar ${probability >= 70 ? 'bg-success' : probability >= 40 ? 'bg-warning' : 'bg-danger'}`;
+        }
+        if (probabilityText) probabilityText.textContent = `${probability}% Chance of Placement`;
+        
+        if (placementResult) {
+            placementResult.textContent = probability >= 40 ? 
+                'Congratulations! You have good chances of getting placed!' :
+                'You need to improve your skills to increase placement chances.';
+        }
+        
+        if (salaryResult) {
+            salaryResult.textContent = probability >= 40 ?
+                `Expected Salary: ₹${result.salary_prediction.toLocaleString()}` :
+                'Focus on improving your skills...';
+        }
+
+        // Calculate overall score
+        const overallScore = probability;
+
+        const overallScoreEl = document.getElementById('overallScore');
+        if (overallScoreEl) {
+            overallScoreEl.textContent = `${overallScore}%`;
+            
+            // Update the circle border color based on score
+            const scoreCircle = document.querySelector('.score-circle');
+            if (scoreCircle) {
+                let color;
+                if (overallScore >= 70) {
+                    color = '#28a745'; // Green for high scores
+                } else if (overallScore >= 40) {
+                    color = '#ffc107'; // Yellow for medium scores
+                } else {
+                    color = '#dc3545'; // Red for low scores
+                }
+                scoreCircle.style.setProperty('--score-color', color);
+                scoreCircle.style.borderColor = color;
+                overallScoreEl.style.color = color;
+            }
+        }
+        
+        // Update recommendations
+        if (recommendationsList && result.recommendations && result.recommendations.length > 0) {
+            recommendationsList.innerHTML = '';
+            result.recommendations.forEach(rec => {
+                const card = document.createElement('div');
+                card.className = 'card h-100';
+                
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'card-header';
+                cardHeader.innerHTML = `<h5 class="card-title mb-0">${rec.skill_area}</h5>`;
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                
+                // Split recommendation into action items and resources
+                const [actionItems, resources] = rec.recommendation.split('\n\nRecommended Resources:');
+                
+                // Create action items section
+                const actionItemsDiv = document.createElement('div');
+                actionItemsDiv.className = 'mb-3';
+                actionItemsDiv.innerHTML = `<p class="card-text">${actionItems}</p>`;
+                
+                // Create resources section
+                const resourcesDiv = document.createElement('div');
+                resourcesDiv.className = 'resources-section';
+                resourcesDiv.innerHTML = `
+                    <h6 class="text-muted">Recommended Resources:</h6>
+                    <ul class="list-unstyled">
+                        ${resources.split('\n').filter(line => line.trim().startsWith('-')).map(line => {
+                            const [text, url] = line.replace('- ', '').split(' (');
+                            const cleanUrl = url ? url.replace(')', '') : '';
+                            return `<li class="mb-1">
+                                <a href="${cleanUrl}" target="_blank" class="text-decoration-none">
+                                    <i class="fas fa-external-link-alt me-1"></i>${text}
+                                </a>
+                            </li>`;
+                        }).join('')}
+                    </ul>
+                `;
+                
+                cardBody.appendChild(actionItemsDiv);
+                cardBody.appendChild(resourcesDiv);
+                
+                card.appendChild(cardHeader);
+                card.appendChild(cardBody);
+                recommendationsList.appendChild(card);
+            });
+        } else if (recommendationsList) {
+            recommendationsList.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">No specific recommendations available.</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // After updating the results, update the charts
+        updatePieChart(data);
+        updateBarChart(data);
+        
+        // Scroll to results
+        predictionResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+    } catch (error) {
+        alert('Error: ' + error.message);
+    } finally {
+        // Reset button state
+        predictBtn.disabled = false;
+        predictBtnText.textContent = 'Get Prediction';
+        predictBtnSpinner.classList.add('d-none');
+    }
+});
+
+function updatePieChart(data) {
+    const ctx = document.getElementById('profilePieChart').getContext('2d');
+    
+    // Calculate percentages for different aspects
+    const academicScore = ((data.cgpa / 10) * 30 + (data.tw_percentage / 100) * 10 + (data.te_percentage / 100) * 10);
+    const technicalScore = ((data.projects / 5) * 15 + (data.mini_projects / 5) * 10 + (data.skills.split(',').length / 10) * 15);
+    const practicalScore = ((data.internship * 10) + (data.hackathon * 5) + (data.workshops / 5) * 5);
+    const softSkillsScore = ((data.communication_skills / 5) * 10);
+
+    // Destroy existing chart if it exists
+    if (window.pieChart) {
+        window.pieChart.destroy();
+    }
+
+    window.pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+                'Academic (CGPA, 12th, 10th)',
+                'Technical (Projects, Mini-Projects, Skills)',
+                'Practical (Internships, Hackathons, Workshops)',
+                'Soft Skills (Communication)'
+            ],
+            datasets: [{
+                data: [academicScore, technicalScore, practicalScore, softSkillsScore],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        font: {
+                            size: 12
+                        },
+                        padding: 20
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Profile Distribution',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            return `${label}: ${value.toFixed(1)}%`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateBarChart(data) {
+    const ctx = document.getElementById('profileBarChart').getContext('2d');
+    
+    // Select key metrics for the bar chart
+    const metrics = {
+        'CGPA': data.cgpa,
+        'Projects': data.projects,
+        'Internships': data.internship,
+        'Skills': data.skills.split(',').length,
+        'Communication': data.communication_skills
+    };
+
+    // Destroy existing chart if it exists
+    if (window.barChart) {
+        window.barChart.destroy();
+    }
+
+    window.barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(metrics),
+            datasets: [{
+                label: 'Score',
+                data: Object.values(metrics),
+                backgroundColor: 'rgba(76, 175, 80, 0.4)',
+                borderColor: 'rgba(76, 175, 80, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: Math.max(...Object.values(metrics)) * 1.2
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+let skillCounter = 1;
+function addSkillField() {
+    skillCounter++;
+    const container = document.querySelector('.skills-container');
+    const newSkillItem = document.createElement('div');
+    newSkillItem.className = 'skill-item mb-2';
+    newSkillItem.innerHTML = `
+        <select class="form-select" name="skill_name[]" id="skill_name_${skillCounter}" aria-label="Select technical skill" required>
+            <option value="">Select Skill</option>
+            <option value="Python">Python</option>
+            <option value="Java">Java</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="C++">C++</option>
+            <option value="SQL">SQL</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Cloud Computing">Cloud Computing</option>
+            <option value="DevOps">DevOps</option>
+            <option value="Mobile Development">Mobile Development</option>
+            <option value="Cybersecurity">Cybersecurity</option>
+            <option value="Blockchain">Blockchain</option>
+            <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <option value="Big Data">Big Data</option>
+        </select>
+        <select class="form-select ms-2" name="skill_level[]" id="skill_level_${skillCounter}" aria-label="Select skill level" required>
+            <option value="">Select Level</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+        </select>
+        <button type="button" class="btn btn-danger btn-sm ms-2" onclick="this.parentElement.remove()">Remove</button>
+    `;
+    container.appendChild(newSkillItem);
+}
+</script>
+{% endblock %}
