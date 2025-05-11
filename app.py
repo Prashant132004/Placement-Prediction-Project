@@ -7,11 +7,18 @@ from io import BytesIO
 from models import db, User, Prediction, Recommendation, Notification
 from datetime import datetime
 import secrets
+import os
+import re
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__, template_folder="templates")
-app.config['SECRET_KEY'] = 'your-secret-key-here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
+
+# Handle PostgreSQL URL for Render
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
@@ -29,8 +36,8 @@ except Exception as e:
     model1 = None
 
 # Admin credentials (in production, these should be stored securely)
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "admin123"  # In production, use a secure password hash
+ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')  # In production, use a secure password hash
 
 def login_required(f):
     def decorated_function(*args, **kwargs):
